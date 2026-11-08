@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home Hub · Mockup B · Night Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b0f14;--tile:#141a21;--tile2:#1b232c;--line:#26303b;--ink:#e8edf2;--muted:#9aa6b2;--accent:#5cc8ff;--ok:#3fb950;--warn:#e3b341;--bad:#ff7b72}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}
+  button{font-family:inherit}
+  a{color:var(--accent)}
+  .wrap{max-width:1440px;margin:0 auto;padding:24px 32px 40px;display:flex;flex-direction:column;gap:20px}
+  .top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:12px;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:20px}
+  .clock{font-family:"Space Grotesk",sans-serif;font-size:44px;font-weight:600;letter-spacing:-.02em;line-height:1}
+  .sub{color:var(--muted);font-size:14px}
+  .pills{display:flex;flex-wrap:wrap;gap:8px}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:var(--tile);border:1px solid var(--line);font-size:13px;color:var(--ink)}
+  .dot{width:8px;height:8px;border-radius:50%}
+  .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+  .tile{background:var(--tile);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+  .label{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .big{font-family:"Space Grotesk",sans-serif;font-size:34px;font-weight:600;letter-spacing:-.01em;line-height:1.05}
+  .btn{min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--tile2);color:var(--ink);font-size:15px;font-weight:600;cursor:pointer;padding:0 18px}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#04121c}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px}
+  .muted{color:var(--muted)}
+  .s3{grid-column:span 3}.s4{grid-column:span 4}.s5{grid-column:span 5}.s6{grid-column:span 6}.s7{grid-column:span 7}.s8{grid-column:span 8}
+  .cam{position:relative;border-radius:12px;overflow:hidden;background:linear-gradient(160deg,#1d2731,#0f151b);aspect-ratio:16/9;display:flex;align-items:flex-end;padding:12px}
+  .cam span{background:rgba(0,0,0,.55);border-radius:6px;padding:4px 8px;font-size:12px}
+  .live{position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;background:rgba(0,0,0,.55);border-radius:6px;padding:4px 8px}
+  .bar{height:6px;border-radius:99px;background:var(--tile2);overflow:hidden}.bar i{display:block;height:100%;border-radius:99px}
+  .feed{display:flex;flex-direction:column;gap:2px}
+  .feed div{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .feed div:last-child{border-bottom:0}
+  @media (max-width:1100px){.s3,.s4,.s5{grid-column:span 6}.s6,.s7,.s8{grid-column:span 12}}
+  @media (max-width:700px){.grid>*{grid-column:span 12}.wrap{padding:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5cc8ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V20h14V9.5"></path><path d="M10 20v-5h4v5"></path></svg>
+        Home Hub
+      </div>
+      <div>
+        <div class="clock">13:52</div>
+        <div class="sub">Sunday 8 November · 7° outside, cloudy</div>
+      </div>
+    </div>
+    <div class="pills">
+      <span class="pill"><span class="dot" style="background:var(--warn)"></span>3 need attention</span>
+      <span class="pill"><span class="dot" style="background:var(--ok)"></span>31 devices OK</span>
+      <span class="pill"><span class="dot" style="background:var(--ok)"></span>Internet · VPN</span>
+      <button class="pill" type="button" style="cursor:pointer" aria-label="Open inbox, 3 unread">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>Inbox · 3
+      </button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- Heating dial -->
+    <section class="tile s4" aria-label="Heating">
+      <div class="row"><span class="label">Heating · Comfort</span><span class="muted" style="font-size:13px">Burner on</span></div>
+      <div style="display:flex;justify-content:center;padding:6px 0">
+        <svg width="220" height="220" viewBox="0 0 220 220" role="img" aria-label="Current 20.5 degrees, target 21.0 degrees">
+          <circle cx="110" cy="110" r="90" fill="none" stroke="#1b232c" stroke-width="16" stroke-dasharray="424 566" stroke-linecap="round" transform="rotate(135 110 110)"></circle>
+          <circle cx="110" cy="110" r="90" fill="none" stroke="#ff9b5c" stroke-width="16" stroke-dasharray="300 566" stroke-linecap="round" transform="rotate(135 110 110)"></circle>
+          <text x="110" y="112" text-anchor="middle" fill="#e8edf2" font-family="Space Grotesk, sans-serif" font-size="52" font-weight="600">20.5°</text>
+          <text x="110" y="142" text-anchor="middle" fill="#9aa6b2" font-family="Inter, sans-serif" font-size="14">target 21.0°</text>
+        </svg>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn" type="button" aria-label="Lower target temperature" style="width:56px">−</button>
+        <button class="btn" type="button" style="flex:1">Eco · Comfort · Off</button>
+        <button class="btn" type="button" aria-label="Raise target temperature" style="width:56px">+</button>
+      </div>
+      <div class="row muted" style="font-size:13px"><span>Hot water 48°</span><span>Flow 52° · Return 41°</span></div>
+    </section>
+
+    <!-- Gate -->
+    <section class="tile s4" aria-label="Main gate">
+      <div class="row"><span class="label">Main gate</span><span class="muted" style="font-size:13px">Remootio</span></div>
+      <div style="display:flex;align-items:center;gap:18px">
+        <div style="width:84px;height:84px;border-radius:22px;background:var(--tile2);display:flex;align-items:center;justify-content:center">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#e8edf2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"></path><path d="M7 21v-9M12 21v-9M17 21v-9M3 12h18"></path></svg>
+        </div>
+        <div><div class="big">Closed</div><div class="sub">Last opened by Ayşe · 11:40</div></div>
+      </div>
+      <button class="btn primary" type="button" style="min-height:64px;font-size:18px">Hold to open</button>
+      <div class="sub" style="font-size:13px">PIN or passkey required · opening is logged</div>
+    </section>
+
+    <!-- Attention -->
+    <section class="tile s4" aria-label="Needs attention">
+      <div class="row"><span class="label">Needs attention</span><a href="#" style="font-size:13px">All</a></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:12px;padding:12px;border-radius:12px;background:var(--tile2);border:1px solid #4a2523">
+          <span class="dot" style="background:var(--bad);margin-top:6px;flex:none"></span>
+          <div><strong style="font-size:15px">HP OfficeJet offline · 2 h</strong><div class="sub" style="font-size:13px">Not on Wi-Fi · last seen on AP Upstairs, −84 dBm</div></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:12px;border-radius:12px;background:var(--tile2);border:1px solid #4a3d1c">
+          <span class="dot" style="background:var(--warn);margin-top:6px;flex:none"></span>
+          <div><strong style="font-size:15px">Dehumidifier tank full</strong><div class="sub" style="font-size:13px">Kitchen · paused 12 min · 61 %</div></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:12px;border-radius:12px;background:var(--tile2);border:1px solid #4a3d1c">
+          <span class="dot" style="background:var(--warn);margin-top:6px;flex:none"></span>
+          <div><strong style="font-size:15px">Hall smoke alarm battery 15 %</strong><div class="sub" style="font-size:13px">Replace within 2 weeks</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cameras -->
+    <section class="tile s8" aria-label="Cameras">
+      <div class="row"><span class="label">Cameras</span><a href="#" style="font-size:13px">Open grid</a></div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+        <div class="cam" role="img" aria-label="Gate camera live view placeholder"><div class="live"><span class="dot" style="background:var(--bad)"></span>LIVE</div><span>Gate · motion 13:31</span></div>
+        <div class="cam" role="img" aria-label="Doorbell camera live view placeholder"><div class="live"><span class="dot" style="background:var(--bad)"></span>LIVE</div><span>Front door</span></div>
+        <div class="cam" role="img" aria-label="Living room camera live view placeholder"><div class="live"><span class="dot" style="background:var(--bad)"></span>LIVE</div><span>Living room</span></div>
+      </div>
+    </section>
+
+    <!-- Vacuum -->
+    <section class="tile s4" aria-label="Robot vacuum">
+      <div class="row"><span class="label">Roborock</span><span class="muted" style="font-size:13px">Battery 98 %</span></div>
+      <div class="big">Docked</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <button class="btn" type="button" style="min-height:40px;font-size:13px">Kitchen</button>
+        <button class="btn" type="button" style="min-height:40px;font-size:13px">Hall</button>
+        <button class="btn" type="button" style="min-height:40px;font-size:13px">Living</button>
+        <button class="btn" type="button" style="min-height:40px;font-size:13px">Bedrooms</button>
+      </div>
+      <button class="btn primary" type="button">Clean selected rooms</button>
+    </section>
+
+    <!-- Small status tiles -->
+    <section class="tile s3" aria-label="Dehumidifier">
+      <span class="label">Dehumidifier</span>
+      <div class="big" style="color:var(--warn)">61 %</div>
+      <div class="sub">Target 50 % · tank full</div>
+      <div class="bar"><i style="width:100%;background:var(--warn)"></i></div>
+    </section>
+    <section class="tile s3" aria-label="Fire alarms">
+      <span class="label">Fire alarms</span>
+      <div class="big" style="color:var(--ok)">All clear</div>
+      <div class="sub">6 detectors · 1 low battery</div>
+      <div class="bar"><i style="width:100%;background:var(--ok)"></i></div>
+    </section>
+    <section class="tile s3" aria-label="Kitchen appliances">
+      <span class="label">Kitchen</span>
+      <div class="row"><span>Fridge</span><strong>4° / −18°</strong></div>
+      <div class="row"><span>Coffee</span><strong>Ready</strong></div>
+      <div class="sub" style="font-size:13px">Descale due in 5 days</div>
+    </section>
+    <section class="tile s3" aria-label="Network">
+      <span class="label">Network</span>
+      <div class="row"><span>Clients</span><strong>37</strong></div>
+      <div class="row"><span>Download</span><strong>312 Mb/s</strong></div>
+      <div class="sub" style="font-size:13px;color:var(--warn)">1 unknown device joined 13:05</div>
+    </section>
+
+    <!-- Activity -->
+    <section class="tile s6" aria-label="Recent activity">
+      <div class="row"><span class="label">Recent activity</span><span class="muted" style="font-size:13px">Today</span></div>
+      <div class="feed">
+        <div><span class="muted">13:31</span><span>Motion at gate camera</span></div>
+        <div><span class="muted">13:05</span><span>Unknown device joined Wi-Fi · Espressif · 192.168.1.88</span></div>
+        <div><span class="muted">11:40</span><span>Gate opened by Ayşe (app, PIN)</span></div>
+        <div><span class="muted">09:12</span><span>Roborock finished · 23 m² · 41 min</span></div>
+      </div>
+    </section>
+    <section class="tile s6" aria-label="Print">
+      <div class="row"><span class="label">Print</span><span class="muted" style="font-size:13px">2 printers</span></div>
+      <div style="flex:1;border:1.5px dashed var(--line);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:24px;text-align:center">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9aa6b2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        <strong>Drop a PDF here to print</strong>
+        <span class="sub" style="font-size:13px">Kitchen laser ready · HP OfficeJet offline</span>
+      </div>
+    </section>
+  </div>
+</div>
+</body>
+</html>

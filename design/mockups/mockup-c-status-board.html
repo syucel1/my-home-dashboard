@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home Hub · Mockup C · Status Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f3f1ec;--card:#ffffff;--ink:#1c1b19;--muted:#5e5a52;--line:#e2ddd3;--ok:#2f7d4f;--warn:#a15c00;--bad:#c2362b;--off:#c9c3b6;--accent:#1d4ed8}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif}
+  button{font-family:inherit}
+  a{color:var(--accent)}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+  .bar{background:var(--ink);color:#f3f1ec}
+  .bar-in{max-width:1440px;margin:0 auto;padding:0 32px;min-height:60px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+  .nav{display:flex;flex-wrap:wrap;gap:4px}
+  .nav a{color:#d9d4c9;text-decoration:none;font-size:14px;padding:10px 14px;border-radius:8px}
+  .nav a.on{background:#33312c;color:#ffffff;font-weight:600}
+  .wrap{max-width:1440px;margin:0 auto;padding:24px 32px 40px;display:flex;flex-direction:column;gap:20px}
+  .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+  .stat b{display:block;font-size:30px;font-weight:600;letter-spacing:-.01em;line-height:1.1}
+  .stat span{font-size:13px;color:var(--muted)}
+  .cols{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+  .main{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
+  .side{flex:1 1 360px;min-width:0;display:flex;flex-direction:column;gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px}
+  .card h2{margin:0;font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+  .head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);gap:12px;flex-wrap:wrap}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .tabs button{min-height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--line);background:#faf9f6;font-size:13px;color:var(--ink);cursor:pointer}
+  .tabs button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .tbl{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+  th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:10px 18px;background:#faf9f6;border-bottom:1px solid var(--line)}
+  td{padding:12px 18px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr:last-child td{border-bottom:0}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+  .chip.ok{background:#e2f1e7;color:var(--ok)}.chip.warn{background:#fbecd6;color:#7d4700}.chip.bad{background:#f8dfdc;color:#9b2a21}.chip.cloud{background:#ebe8e1;color:var(--muted)}
+  .strip{display:flex;gap:2px;height:18px;align-items:stretch}
+  .strip i{flex:1;border-radius:2px;background:var(--ok)}
+  .strip i.w{background:#d99a2b}.strip i.b{background:var(--bad)}
+  .grp{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;background:#fbfaf7}
+  .note{display:flex;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .note:last-child{border-bottom:0}
+  .sev{width:4px;border-radius:4px;flex:none}
+  .act{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .act button{min-height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer}
+  .q{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:16px 18px}
+  .q button{min-height:56px;border-radius:10px;border:1px solid var(--line);background:#faf9f6;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left;padding:10px 14px;display:flex;flex-direction:column;gap:2px}
+  .q button small{font-weight:400;color:var(--muted);font-size:12px}
+  @media (max-width:900px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap,.bar-in{padding-left:16px;padding-right:16px}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f3f1ec" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V20h14V9.5"></path></svg>Home Hub
+      </span>
+      <nav class="nav" aria-label="Main">
+        <a class="on" href="#">Status</a><a href="#">Rooms</a><a href="#">Network</a><a href="#">Cameras</a><a href="#">History</a><a href="#">Settings</a>
+      </nav>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;font-size:13px;color:#d9d4c9">
+      <span class="mono">Sun 08 Nov · 13:52</span>
+      <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#5bd28a"></span>WAN up 14 d</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px">
+    <div>
+      <h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-.01em">House status</h1>
+      <p style="margin:4px 0 0;color:var(--muted);font-size:14px">34 devices across 7 integrations · updated live</p>
+    </div>
+    <div class="tabs" role="group" aria-label="Show">
+      <button class="on" type="button">All</button><button type="button">Issues (3)</button><button type="button">Cloud</button><button type="button">Local</button>
+    </div>
+  </div>
+
+  <section class="stats" aria-label="Summary">
+    <div class="stat"><b style="color:var(--ok)">31</b><span>Online</span></div>
+    <div class="stat"><b style="color:var(--warn)">2</b><span>Degraded</span></div>
+    <div class="stat"><b style="color:var(--bad)">1</b><span>Offline</span></div>
+    <div class="stat"><b>99.4 %</b><span>Uptime · 30 days</span></div>
+    <div class="stat"><b>812<span style="font-size:16px;color:var(--muted)"> / 1450</span></b><span>ViCare API calls today</span></div>
+  </section>
+
+  <div class="cols">
+    <div class="main">
+      <section class="card" aria-labelledby="dev-h">
+        <div class="head"><h2 id="dev-h">Devices</h2><span style="font-size:13px;color:var(--muted)">Last 24 h health ↓</span></div>
+        <div class="tbl">
+          <table>
+            <thead><tr><th scope="col">Device</th><th scope="col">State</th><th scope="col">Health</th><th scope="col" style="width:200px">24 h</th><th scope="col">Last seen</th></tr></thead>
+            <tbody>
+              <tr><td colspan="5" class="grp">Needs attention</td></tr>
+              <tr><td><strong>HP OfficeJet</strong><div style="font-size:12px;color:var(--muted)">Study · IPP</div></td><td>—</td><td><span class="chip bad">Offline · not on Wi-Fi</span></td><td><div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="b"></i><i class="b"></i></div></td><td class="mono" style="font-size:13px">11:48</td></tr>
+              <tr><td><strong>Kitchen dehumidifier</strong><div style="font-size:12px;color:var(--muted)">Kitchen · Tuya local</div></td><td>61 % · paused</td><td><span class="chip warn">Tank full</span></td><td><div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="w"></i></div></td><td class="mono" style="font-size:13px">13:52</td></tr>
+              <tr><td><strong>Hall smoke alarm</strong><div style="font-size:12px;color:var(--muted)">Hall · X-Sense MQTT</div></td><td>Clear</td><td><span class="chip warn">Battery 15 %</span></td><td><div class="strip" aria-hidden="true"><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i></div></td><td class="mono" style="font-size:13px">13:37</td></tr>
+              <tr><td colspan="5" class="grp">Healthy</td></tr>
+              <tr><td><strong>Main gate</strong><div style="font-size:12px;color:var(--muted)">Front garden · Remootio</div></td><td>Closed</td><td><span class="chip ok">Online</span></td><td><div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></td><td class="mono" style="font-size:13px">13:52</td></tr>
+              <tr><td><strong>Boiler</strong><div style="font-size:12px;color:var(--muted)">Utility · ViCare cloud</div></td><td>20.5° → 21.0° · burner on</td><td><span class="chip ok">Online</span></td><td><div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i class="w"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></td><td class="mono" style="font-size:13px">13:51</td></tr>
+              <tr><td><strong>Roborock</strong><div style="font-size:12px;color:var(--muted)">Living room · sidecar</div></td><td>Docked · 98 %</td><td><span class="chip ok">Online</span></td><td><div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></td><td class="mono" style="font-size:13px">13:52</td></tr>
+              <tr><td><strong>Gate camera</strong><div style="font-size:12px;color:var(--muted)">Front garden · ONVIF</div></td><td>Live · motion 13:31</td><td><span class="chip ok">Online</span></td><td><div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></td><td class="mono" style="font-size:13px">13:52</td></tr>
+              <tr><td><strong>Fridge</strong><div style="font-size:12px;color:var(--muted)">Kitchen · vendor cloud</div></td><td>4° / −18°</td><td><span class="chip ok">Online</span></td><td><div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></td><td class="mono" style="font-size:13px">13:50</td></tr>
+              <tr><td><strong>Main router</strong><div style="font-size:12px;color:var(--muted)">Network rack · router API</div></td><td>37 clients · 312 Mb/s</td><td><span class="chip ok">Online</span></td><td><div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></td><td class="mono" style="font-size:13px">13:52</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:12px 18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)">Showing 9 of 34 · <a href="#">Show all devices</a></div>
+      </section>
+    </div>
+
+    <aside class="side">
+      <section class="card" aria-labelledby="inbox-h">
+        <div class="head"><h2 id="inbox-h">Inbox</h2><span class="chip bad">3 active</span></div>
+        <div class="note"><span class="sev" style="background:var(--bad)"></span><div style="min-width:0"><strong style="font-size:14px">Printer offline for 2 h</strong><div style="font-size:13px;color:var(--muted)">HP OfficeJet left Wi-Fi at 11:48 · ×1</div><div class="act"><button type="button">Acknowledge</button><button type="button">Snooze 1 h</button></div></div></div>
+        <div class="note"><span class="sev" style="background:#d99a2b"></span><div style="min-width:0"><strong style="font-size:14px">Dehumidifier tank full</strong><div style="font-size:13px;color:var(--muted)">Kitchen · 13:40 · ×2</div><div class="act"><button type="button">Acknowledge</button><button type="button">Snooze 1 h</button></div></div></div>
+        <div class="note"><span class="sev" style="background:#d99a2b"></span><div style="min-width:0"><strong style="font-size:14px">Unknown device joined Wi-Fi</strong><div style="font-size:13px;color:var(--muted)">Espressif · 192.168.1.88 · 13:05</div><div class="act"><button type="button">Mark as known</button><button type="button">Block</button></div></div></div>
+      </section>
+
+      <section class="card" aria-labelledby="qa-h">
+        <div class="head"><h2 id="qa-h">Quick actions</h2></div>
+        <div class="q">
+          <button type="button">Open gate<small>PIN required</small></button>
+          <button type="button">Heating +0.5°<small>Comfort · 21.0°</small></button>
+          <button type="button">Clean kitchen<small>Roborock</small></button>
+          <button type="button">Print a file<small>Kitchen laser</small></button>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="int-h">
+        <div class="head"><h2 id="int-h">Integrations</h2></div>
+        <div style="padding:8px 18px 14px;display:flex;flex-direction:column;gap:10px;font-size:14px">
+          <div style="display:flex;justify-content:space-between"><span>Remootio · local</span><span class="chip ok">Connected</span></div>
+          <div style="display:flex;justify-content:space-between"><span>ViCare · cloud</span><span class="chip ok">56 % budget used</span></div>
+          <div style="display:flex;justify-content:space-between"><span>X-Sense · local MQTT</span><span class="chip ok">Connected</span></div>
+          <div style="display:flex;justify-content:space-between"><span>Tuya · local</span><span class="chip ok">Connected</span></div>
+          <div style="display:flex;justify-content:space-between"><span>Roborock · sidecar</span><span class="chip ok">Running</span></div>
+        </div>
+      </section>
+    </aside>
+  </div>
+</main>
+</body>
+</html>
