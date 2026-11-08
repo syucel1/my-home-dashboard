@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home Hub: Main Design Document</title>
+<style>
+  :root {
+    --ink:#1f2328; --muted:#59636e; --line:#d1d9e0; --soft:#f6f8fa;
+    --blue:#0969da; --green:#1a7f37; --amber:#9a6700; --red:#cf222e; --purple:#8250df;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin:0; font: 15px/1.6 "Inter", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color:var(--ink); background:#fff; }
+  main { max-width: 1040px; margin: 0 auto; padding: 0 40px 80px; }
+  header.cover { padding: 72px 0 40px; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); font-weight: 600; }
+  h1 { font-size: 40px; line-height: 1.15; margin: 10px 0 12px; letter-spacing: -.02em; }
+  .lede { font-size: 18px; color: var(--muted); max-width: 760px; margin: 0; }
+  .meta { display:flex; gap: 28px; flex-wrap: wrap; margin-top: 28px; font-size: 13px; color: var(--muted); }
+  .meta b { display:block; color: var(--ink); font-size: 14px; }
+  h2 { font-size: 24px; margin: 56px 0 8px; padding-top: 8px; letter-spacing: -.01em; }
+  h2 .n { color: var(--blue); margin-right: 10px; font-variant-numeric: tabular-nums; }
+  h3 { font-size: 17px; margin: 28px 0 6px; }
+  p { margin: 8px 0 12px; }
+  .sub { color: var(--muted); margin-top: 0; }
+  ul { padding-left: 20px; margin: 8px 0 14px; } li { margin: 3px 0; }
+  table { width:100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 13.5px; }
+  th, td { text-align:left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  th { background: var(--soft); font-weight: 600; font-size: 12.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  code { font: 12.5px/1.4 "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--soft); padding: 1px 5px; border-radius: 4px; }
+  .toc { columns: 2; column-gap: 40px; background: var(--soft); border-radius: 12px; padding: 20px 28px; margin: 8px 0 0; }
+  .toc a { color: var(--ink); text-decoration: none; } .toc a:hover { color: var(--blue); }
+  .toc ol { margin:0; padding-left: 20px; } .toc li { break-inside: avoid; }
+  .cards { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 14px 0 8px; }
+  .card { border:1px solid var(--line); border-radius: 12px; padding: 14px 16px; background:#fff; }
+  .card b { display:block; margin-bottom: 4px; }
+  .card span { color: var(--muted); font-size: 13.5px; }
+  .callout { border-left: 4px solid var(--amber); background: #fff8c5; padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 16px 0; font-size: 14px; }
+  .callout.red { border-color: var(--red); background: #ffebe9; }
+  .callout.blue { border-color: var(--blue); background: #ddf4ff; }
+  figure.diagram { margin: 18px 0 26px; padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: #fff; text-align:center; break-inside: avoid; }
+  figure.diagram img { max-width: 100%; height: auto; }
+  figure.diagram pre.mermaid { margin:0; background: transparent; }
+  figcaption { margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+  .pill { display:inline-block; padding: 1px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .g { background:#dafbe1; color:var(--green); } .y { background:#fff8c5; color:var(--amber); } .r { background:#ffebe9; color:var(--red); } .q { background:#eaeef2; color:var(--muted); }
+  .phase-a { color: var(--purple); } .phase-b { color: var(--blue); } .phase-c { color: var(--green); } .phase-d { color: var(--amber); }
+  footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+  @page { size: A4; margin: 16mm 14mm 18mm; }
+  @media print {
+    body { font-size: 11.5px; }
+    main { max-width: none; padding: 0; }
+    header.cover { padding: 8px 0 18px; margin-bottom: 16px; }
+    h1 { font-size: 30px; }
+    .lede { font-size: 14px; }
+    .meta { margin-top: 14px; }
+    .toc { padding: 12px 20px; }
+    .cards { gap: 8px; }
+    .card { padding: 9px 12px; }
+    h2 { break-before: page; margin-top: 0; }
+    h2.nobreak { break-before: auto; margin-top: 36px; }
+    table, .card, .callout { break-inside: avoid; }
+    figure.diagram { padding: 10px; }
+    figure.diagram img { max-height: 225mm; width: auto; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header class="cover">
+  <div class="eyebrow">Home Hub · Main Design Document</div>
+  <h1>One dashboard for every device in the house</h1>
+  <p class="lede">A self-hosted home platform with a Java backend and a modern browser UI. It brings the gate, heating, fire alarms, dehumidifier, robot vacuum, printers, cameras, network, fridge and coffee machine onto one clean dashboard. Device health and notifications are first-class features.</p>
+  <div class="meta">
+    <div><b>Status</b>Phase 1: Design (draft v0.1)</div>
+    <div><b>Date</b>8 November 2026</div>
+    <div><b>Owner</b>Serkan Yucel</div>
+    <div><b>Runs on</b>Docker Compose, single home server</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <ol>
+    <li><a href="#vision">Vision &amp; scope</a></li>
+    <li><a href="#principles">Principles &amp; technology</a></li>
+    <li><a href="#context">System context</a></li>
+    <li><a href="#components">Component architecture</a></li>
+    <li><a href="#integration">Integrating proprietary devices</a></li>
+    <li><a href="#devices">Device integration summary</a></li>
+    <li><a href="#health">Health &amp; notifications</a></li>
+    <li><a href="#flows">Key runtime flows</a></li>
+    <li><a href="#deployment">Deployment &amp; security</a></li>
+    <li><a href="#roadmap">Roadmap: 20 phases</a></li>
+    <li><a href="#decisions">Decisions &amp; open questions</a></li>
+    <li><a href="#docs">Detailed design documents</a></li>
+  </ol>
+</nav>
+
+<h2 id="vision" class="nobreak"><span class="n">1</span>Vision &amp; scope</h2>
+<p>Home Hub is <b>not</b> a Home Assistant clone. Home Assistant has a decade of community integrations, and matching it is not the goal. Instead, Home Hub does a smaller set of things very well, for the devices this household actually owns. Its architecture still lets it grow through open standards.</p>
+<div class="cards">
+  <div class="card"><b>🏠 One dashboard</b><span>Every device on one live, glanceable screen, organised by room.</span></div>
+  <div class="card"><b>🩺 Health first</b><span>You always see what is offline or faulty, why, and for how long, with an incident history.</span></div>
+  <div class="card"><b>🔔 One inbox</b><span>Notifications from every device: de-duplicated, with acknowledge/snooze, delivered by Web Push and email.</span></div>
+  <div class="card"><b>🎛️ Direct control</b><span>Open the gate, set the heating, clean rooms, print a PDF, all from the browser.</span></div>
+  <div class="card"><b>🔌 Driver SDK</b><span>New integrations in days: Java plug-ins or containers in any language.</span></div>
+  <div class="card"><b>🔒 Local &amp; secure</b><span>Local protocols first, VPN-only remote access, encrypted credentials.</span></div>
+</div>
+<h3>Out of scope for v1.0</h3>
+<ul>
+  <li>Feature parity with Home Assistant, native mobile apps (a PWA is used instead), multi-home SaaS, and NVR video recording.</li>
+  <li>Being the <i>primary</i> fire alarm. The detectors and the official app stay primary, and the hub is a second channel.</li>
+</ul>
+
+<h2 id="principles"><span class="n">2</span>Principles &amp; technology</h2>
+<table>
+  <tr><th style="width:28%">Principle</th><th>What it means</th></tr>
+  <tr><td><b>One internal language</b></td><td>Every vendor protocol is translated at the edge into <code>Device → Capability → State / Command / Event</code>. The core, UI and rules never see a vendor protocol.</td></tr>
+  <tr><td><b>Drivers are plug-ins</b></td><td>A driver runs in-process (Java SPI) or out-of-process (a sidecar container speaking MQTT). This lets us reuse mature community libraries.</td></tr>
+  <tr><td><b>Health is computed</b></td><td>Derived from heartbeats, last-seen times, fault codes and connectivity, rather than trusting vendors to report problems.</td></tr>
+  <tr><td><b>Budgets for cloud APIs</b></td><td>Rate limits (e.g. ViCare: 1,450 calls/day) are enforced centrally, with a reserve kept for user commands.</td></tr>
+  <tr><td><b>Secure by default</b></td><td>Vault-encrypted secrets, step-up confirmation for opening the gate, no port forwarding.</td></tr>
+  <tr><td><b>Boring core, exciting edges</b></td><td>Proven technology in the core; the innovation goes into the drivers and the user experience.</td></tr>
+</table>
+<table>
+  <tr><th style="width:28%">Layer</th><th>Choice</th></tr>
+  <tr><td>Backend</td><td>Java 25 (virtual threads), Spring Boot 4, Maven multi-module (a modular monolith)</td></tr>
+  <tr><td>Data</td><td>PostgreSQL 17 + TimescaleDB (registry, state, time-series history), Flyway</td></tr>
+  <tr><td>Messaging</td><td>Typed in-process event bus; Eclipse Mosquitto (MQTT 5) at the edge for sidecars and MQTT devices</td></tr>
+  <tr><td>API</td><td>REST (OpenAPI 3) + WebSocket/STOMP for live updates</td></tr>
+  <tr><td>Frontend</td><td>React 19 + TypeScript + Vite, Tailwind + shadcn/ui, TanStack Query, ECharts; installable PWA</td></tr>
+  <tr><td>Media &amp; printing</td><td>go2rtc (RTSP → WebRTC), IPP Everywhere (+ optional CUPS)</td></tr>
+  <tr><td>Delivery</td><td>Docker images (Jib), Docker Compose, Caddy (TLS), GitHub Actions</td></tr>
+</table>
+
+<h2 id="context"><span class="n">3</span>System context</h2>
+<p class="sub">Who and what Home Hub talks to. Local devices are reached directly on the LAN; cloud-only devices go through vendor APIs. Remote access goes through the existing VPN router.</p>
+<figure class="diagram"><pre class="mermaid">
+flowchart LR
+    classDef person fill:#1f6feb,stroke:#0b3d91,color:#fff
+    classDef system fill:#2da44e,stroke:#116329,color:#fff
+    classDef ext fill:#6e7781,stroke:#424a53,color:#fff
+    classDef dev fill:#bf8700,stroke:#7d4e00,color:#fff
+
+    U([&quot;👤 Household user&lt;br/&gt;(browser / PWA)&quot;]):::person
+    HUB[&quot;🏠 Home Hub&lt;br/&gt;Java backend + Web UI&lt;br/&gt;(Docker host on LAN)&quot;]:::system
+
+    subgraph LAN[&quot;Home LAN devices&quot;]
+        direction TB
+        D1[&quot;Remootio gate&quot;]:::dev
+        D2[&quot;ProBreeze dehumidifier (Tuya)&quot;]:::dev
+        D3[&quot;Roborock vacuum&quot;]:::dev
+        D4[&quot;Printers (IPP)&quot;]:::dev
+        D5[&quot;IP cameras (RTSP/ONVIF)&quot;]:::dev
+        D6[&quot;Routers / VPN router / clients&quot;]:::dev
+        D7[&quot;X-Sense SBS50 (local MQTT)&quot;]:::dev
+    end
+
+    subgraph CLOUD[&quot;Vendor clouds&quot;]
+        direction TB
+        C1[&quot;Viessmann API (ViCare)&quot;]:::ext
+        C2[&quot;X-Sense cloud (fallback)&quot;]:::ext
+        C3[&quot;Fridge / coffee vendor cloud ⚠️&quot;]:::ext
+        C4[&quot;Roborock cloud (fallback)&quot;]:::ext
+    end
+
+    N[&quot;📣 Notification channels&lt;br/&gt;Web Push · ntfy · Email&quot;]:::ext
+    VPN[&quot;🔐 VPN router&lt;br/&gt;(remote access)&quot;]:::ext
+
+    U -- &quot;HTTPS / WSS&quot; --&gt; HUB
+    U -. &quot;remote via VPN&quot; .-&gt; VPN -.-&gt; HUB
+    HUB -- &quot;local protocols&quot; --&gt; LAN
+    HUB -- &quot;HTTPS / MQTT&quot; --&gt; CLOUD
+    HUB -- &quot;push&quot; --&gt; N --&gt; U
+</pre><figcaption>Figure 1: System context</figcaption></figure>
+
+<h2 id="components"><span class="n">4</span>Component architecture</h2>
+<p class="sub">Five layers inside one Spring Boot application, plus infrastructure containers. Commands flow down to the drivers; state and events flow up through the event bus to the subscribers and out to the browser.</p>
+<figure class="diagram"><pre class="mermaid">
+flowchart TB
+    classDef ui fill:#1f6feb,stroke:#0b3d91,color:#fff
+    classDef api fill:#8250df,stroke:#512a97,color:#fff
+    classDef core fill:#2da44e,stroke:#116329,color:#fff
+    classDef bus fill:#116329,stroke:#0a3d1a,color:#fff
+    classDef drv fill:#bf8700,stroke:#7d4e00,color:#fff
+    classDef infra fill:#6e7781,stroke:#424a53,color:#fff
+    classDef ext fill:#ffffff,stroke:#6e7781,color:#24292f,stroke-dasharray: 4 3
+
+    UI[&quot;🖥️ Web UI · React PWA&quot;]:::ui
+
+    subgraph APP[&quot;hub-app · Spring Boot&quot;]
+        direction TB
+        subgraph EDGE[&quot;① API layer&quot;]
+            direction LR
+            REST[&quot;REST API&lt;br/&gt;OpenAPI&quot;]:::api
+            WS[&quot;WebSocket&lt;br/&gt;STOMP live channel&quot;]:::api
+            AUTH[&quot;Security&lt;br/&gt;AuthN · AuthZ · 2FA&quot;]:::api
+        end
+
+        subgraph SVC[&quot;② Core services: request side&quot;]
+            direction LR
+            REG[&quot;Device&lt;br/&gt;Registry&quot;]:::core
+            CMD[&quot;Command&lt;br/&gt;Service&quot;]:::core
+            MEDIA[&quot;Media&lt;br/&gt;Service&quot;]:::core
+            DISC[&quot;Discovery&lt;br/&gt;Service&quot;]:::core
+        end
+
+        BUS((&quot;③ Internal&lt;br/&gt;Event Bus&quot;)):::bus
+
+        subgraph SUBS[&quot;④ Core services: event subscribers&quot;]
+            direction LR
+            STATE[&quot;State&lt;br/&gt;Store&quot;]:::core
+            HEALTH[&quot;Health&lt;br/&gt;Monitor&quot;]:::core
+            NOTIF[&quot;Notification&lt;br/&gt;Engine&quot;]:::core
+            HIST[&quot;History&lt;br/&gt;Service&quot;]:::core
+            RULES[&quot;Rules&lt;br/&gt;Engine&quot;]:::core
+        end
+
+        subgraph DRV[&quot;⑤ Driver layer&quot;]
+            direction LR
+            DM[&quot;Driver Manager&lt;br/&gt;+ Vault + Rate Budgets&quot;]:::drv
+            INP[&quot;In-process drivers&lt;br/&gt;Remootio · ViCare · Tuya · IPP&lt;br/&gt;ONVIF · Network · MQTT-Discovery&quot;]:::drv
+            BR[&quot;Sidecar&lt;br/&gt;Bridge&quot;]:::drv
+        end
+    end
+
+    subgraph INFRA[&quot;Infrastructure containers&quot;]
+        direction LR
+        PG[(&quot;PostgreSQL&lt;br/&gt;+ TimescaleDB&quot;)]:::infra
+        MQ[[&quot;Mosquitto&lt;br/&gt;MQTT 5&quot;]]:::infra
+        G2R[&quot;go2rtc&quot;]:::infra
+        SC[&quot;Sidecar drivers&lt;br/&gt;Roborock · X-Sense (cloud)&quot;]:::drv
+    end
+
+    DEV[&quot;📡 Devices &amp; vendor clouds&quot;]:::ext
+
+    UI &lt;==&gt; EDGE
+    EDGE ==&gt; SVC
+    SVC == &quot;commands&quot; ==&gt; DM
+    DM --&gt; INP &amp; BR
+    INP &lt;==&gt; DEV
+    INP == &quot;state · events&quot; ==&gt; BUS
+    BR == &quot;state · events&quot; ==&gt; BUS
+    BUS ==&gt; SUBS
+    SUBS -. &quot;live push&quot; .-&gt; WS
+    BR &lt;--&gt; MQ &lt;--&gt; SC
+    SC &lt;--&gt; DEV
+    MEDIA --&gt; G2R
+    SUBS --&gt; PG
+</pre><figcaption>Figure 2: Component architecture (layered view)</figcaption></figure>
+<table>
+  <tr><th style="width:26%">Component</th><th>Responsibility</th></tr>
+  <tr><td>API layer</td><td>REST for queries and commands; WebSocket for live state, events and notifications; authentication, roles, 2FA and step-up</td></tr>
+  <tr><td>Device Registry · Command Service</td><td>Devices, rooms and capabilities; validates, confirms, dispatches and tracks commands (<code>PENDING → SENT → CONFIRMED / FAILED / TIMEOUT</code>)</td></tr>
+  <tr><td>Event Bus</td><td>Typed in-process pub/sub with per-device ordering and isolated subscribers on virtual threads</td></tr>
+  <tr><td>State · Health · Notifications · History · Rules</td><td>Current-state projection; health and incidents; notification inbox and channels; TimescaleDB history; simple automations</td></tr>
+  <tr><td>Driver layer</td><td>Driver Manager (lifecycle, supervision, back-off restarts), Credential Vault, Rate-Budget Manager, in-process drivers, Sidecar Bridge</td></tr>
+  <tr><td>Media &amp; Discovery</td><td>Camera sessions through go2rtc, print jobs; mDNS / SSDP / ONVIF / ARP discovery for onboarding</td></tr>
+</table>
+<figure class="diagram"><pre class="mermaid">
+flowchart LR
+    classDef m fill:#f6f8fa,stroke:#57606a,color:#24292f
+    classDef d fill:#fff8c5,stroke:#9a6700,color:#24292f
+
+    API[&quot;hub-domain&lt;br/&gt;(records, capabilities, events)&quot;]:::m
+    SDK[&quot;hub-driver-sdk&lt;br/&gt;(SPI, test kit)&quot;]:::m
+    CORE[&quot;hub-core&lt;br/&gt;(services)&quot;]:::m
+    PERS[&quot;hub-persistence&lt;br/&gt;(JPA/JDBC, Flyway)&quot;]:::m
+    WEB[&quot;hub-web&lt;br/&gt;(REST, WS, security)&quot;]:::m
+    APP[&quot;hub-app&lt;br/&gt;(Spring Boot main)&quot;]:::m
+    DRVS[&quot;drivers/*&lt;br/&gt;remootio, vicare, tuya,&lt;br/&gt;ipp, onvif, network&quot;]:::d
+    UI[&quot;hub-ui&lt;br/&gt;(React, separate build)&quot;]:::m
+    SCAR[&quot;sidecars/*&lt;br/&gt;roborock, xsense (Python)&quot;]:::d
+
+    SDK --&gt; API
+    CORE --&gt; API
+    CORE --&gt; SDK
+    PERS --&gt; CORE
+    WEB --&gt; CORE
+    DRVS --&gt; SDK
+    APP --&gt; WEB &amp; PERS &amp; DRVS
+</pre><figcaption>Figure 3: Maven modules. Drivers depend only on the SDK.</figcaption></figure>
+
+<h2 id="integration"><span class="n">5</span>Integrating proprietary devices</h2>
+<p>Every vendor speaks its own language: encrypted WebSockets (Remootio), OAuth REST with strict quotas (Viessmann), AES-encrypted TCP (Tuya), RTSP (cameras), IPP (printers), and reverse-engineered cloud protocols (Roborock, X-Sense). Home Hub supports <b>two kinds of driver behind one contract</b>, so the core cannot tell them apart.</p>
+<figure class="diagram"><pre class="mermaid">
+flowchart LR
+    classDef core fill:#2da44e,stroke:#116329,color:#fff
+    classDef drv fill:#bf8700,stroke:#7d4e00,color:#fff
+    classDef mq fill:#6e7781,stroke:#424a53,color:#fff
+    classDef dev fill:#ffffff,stroke:#6e7781,color:#24292f,stroke-dasharray: 4 3
+
+    subgraph HUB[&quot;hub-app JVM&quot;]
+        DM[&quot;Driver Manager&quot;]:::core
+        CTX[&quot;DriverContext&lt;br/&gt;(publish state/events,&lt;br/&gt;vault, budget, scheduler,&lt;br/&gt;http/ws/tcp clients)&quot;]:::core
+        J1[&quot;Java driver&lt;br/&gt;implements Driver SPI&quot;]:::drv
+        BR[&quot;Sidecar Bridge&lt;br/&gt;(acts as a Java driver&lt;br/&gt;for each sidecar)&quot;]:::drv
+    end
+
+    MQ[[&quot;MQTT broker&quot;]]:::mq
+    S1[&quot;Sidecar driver&lt;br/&gt;(Python / Node / Go)&lt;br/&gt;speaks Driver Protocol&quot;]:::drv
+
+    D1[&quot;Device / cloud&quot;]:::dev
+    D2[&quot;Device / cloud&quot;]:::dev
+
+    DM --&gt; J1
+    DM --&gt; BR
+    J1 &lt;--&gt; CTX
+    BR &lt;--&gt; CTX
+    J1 &lt;--&gt; D1
+    BR &lt;--&gt; MQ &lt;--&gt; S1 &lt;--&gt; D2
+</pre><figcaption>Figure 4: In-process Java drivers and out-of-process sidecars share one contract</figcaption></figure>
+<table>
+  <tr><th style="width:26%">Integration style</th><th>Pattern</th><th style="width:26%">Used by</th></tr>
+  <tr><td>Local push</td><td>Persistent socket; listen loop; reconnect with back-off; availability on disconnect</td><td>Remootio, Tuya, ONVIF events</td></tr>
+  <tr><td>Local poll</td><td>Scheduled query → diff → publish changed attributes</td><td>Printers, routers, ARP</td></tr>
+  <tr><td>Cloud poll with quota</td><td>Rate budget checked first; adaptive interval; "cloud unreachable" handling</td><td>Viessmann ViCare</td></tr>
+  <tr><td>Device publishes to our broker</td><td>Home Assistant-style MQTT discovery topics → capabilities</td><td>X-Sense SBS50, Zigbee2MQTT, Tasmota, Shelly</td></tr>
+  <tr><td>Sidecar (any language)</td><td>MQTT Driver Protocol: state, events, commands with request/response, Last Will for liveness</td><td>Roborock, X-Sense cloud fallback</td></tr>
+  <tr><td>Media / jobs</td><td>The driver exposes streams or jobs; Media Service and go2rtc deliver WebRTC; IPP job tracking</td><td>Cameras, printers</td></tr>
+</table>
+
+<h2 id="devices"><span class="n">6</span>Device integration summary</h2>
+<p class="sub"><span class="pill g">local, documented</span> <span class="pill y">local reverse-engineered, or official cloud</span> <span class="pill q">⚠️ needs your input</span></p>
+<table>
+  <tr><th>Device</th><th>How</th><th>Driver</th><th>Phase</th></tr>
+  <tr><td>Remootio main gate <span class="pill g">local</span></td><td>Local WebSocket API v2 (encrypted), mDNS discovery, PIN step-up to open</td><td>Java <code>remootio</code></td><td>12</td></tr>
+  <tr><td>HP &amp; other printers <span class="pill g">local</span></td><td>IPP Everywhere: status, ink, print a PDF straight from the dashboard</td><td>Java <code>ipp</code></td><td>13</td></tr>
+  <tr><td>Routers, VPN router, clients <span class="pill q">⚠️</span></td><td>Generic ARP / mDNS / SNMP layer plus a vendor API adapter; unknown-device alerts; Wi-Fi survey</td><td>Java <code>network</code></td><td>14</td></tr>
+  <tr><td>X-Sense fire alarms <span class="pill y">local</span></td><td><b>Official local MQTT bridge</b> from the SBS50 base station to our broker; cloud API as a fallback for battery and liveness</td><td>Java <code>mqtt-discovery</code> + sidecar</td><td>15</td></tr>
+  <tr><td>Viessmann ViCare heating <span class="pill y">cloud</span></td><td>Official REST API, OAuth PKCE; free tier allows 120 calls/10 min and 1,450/day, so polling is adaptive</td><td>Java <code>vicare</code></td><td>16</td></tr>
+  <tr><td>ProBreeze dehumidifier <span class="pill q">⚠️</span></td><td>Tuya local protocol (TCP 6668, AES) with a device-profile file; Midea variant if the model needs it</td><td>Java <code>tuya-local</code></td><td>17</td></tr>
+  <tr><td>Roborock vacuum <span class="pill y">local</span></td><td>Local TCP 58867 using a local key fetched once from the cloud; built on python-roborock</td><td>Sidecar <code>roborock</code></td><td>18</td></tr>
+  <tr><td>IP cameras <span class="pill q">⚠️</span></td><td>ONVIF discovery, PTZ and events; RTSP → go2rtc → WebRTC in the browser</td><td>Java <code>onvif</code> + go2rtc</td><td>19</td></tr>
+  <tr><td>Fridge &amp; coffee machine <span class="pill q">⚠️</span></td><td>Depends on brand: Home Connect, SmartThings or LG ThinQ (all official APIs)</td><td>Java, per vendor</td><td>20</td></tr>
+</table>
+<div class="callout blue"><b>Leverage:</b> the generic MQTT-Discovery and Tuya-local drivers also cover Zigbee2MQTT, Tasmota, Shelly and hundreds of Tuya devices <i>without new code</i>. That is the route for lights and sensors after v1.</div>
+
+<h2 id="health"><span class="n">7</span>Health &amp; notifications</h2>
+<p>Health is the headline feature. Every device has a computed health state, and each transition into a bad state opens an <b>incident</b>, which feeds the "malfunction history" and uptime figures.</p>
+<figure class="diagram"><pre class="mermaid">
+stateDiagram-v2
+    [*] --&gt; UNKNOWN : device registered
+    UNKNOWN --&gt; ONLINE : first successful contact
+    ONLINE --&gt; DEGRADED : fault code / low battery /&lt;br/&gt;weak signal / stale data
+    DEGRADED --&gt; ONLINE : condition cleared
+    ONLINE --&gt; OFFLINE : missed heartbeats ≥ threshold&lt;br/&gt;or driver disconnected
+    DEGRADED --&gt; OFFLINE : missed heartbeats ≥ threshold
+    OFFLINE --&gt; ONLINE : contact restored
+    ONLINE --&gt; CLOUD_UNREACHABLE : hub internet down&lt;br/&gt;(cloud-only devices)
+    CLOUD_UNREACHABLE --&gt; ONLINE : internet restored
+    ONLINE --&gt; DISABLED : user disables
+    DISABLED --&gt; UNKNOWN : user enables
+</pre><figcaption>Figure 5: Device health state machine</figcaption></figure>
+<ul>
+  <li><b>OFFLINE</b> is declared when no data arrives for 2× the expected refresh interval, or when the driver's connection drops.</li>
+  <li><b>DEGRADED</b> covers fault codes, low battery, weak Wi-Fi, a full tank, or consumables under 10 %, always with a human-readable reason.</li>
+  <li><b>CLOUD_UNREACHABLE</b> applies when the hub's own internet is down. Cloud-only devices are not falsely reported as broken.</li>
+  <li><b>Network correlation:</b> "Offline: not connected to Wi-Fi (last seen on AP Upstairs, −84 dBm)".</li>
+</ul>
+<table>
+  <tr><th>Notification feature</th><th>Behaviour</th></tr>
+  <tr><td>Severity</td><td>INFO · WARNING · CRITICAL. CRITICAL (smoke, CO) bypasses quiet hours and goes to every channel and every user.</td></tr>
+  <tr><td>De-duplication</td><td>Repeats increment a counter instead of sending another push. A grace period prevents alerts from devices that flap on and off.</td></tr>
+  <tr><td>Lifecycle</td><td>New → Seen → Acknowledged → Resolved, or Snoozed. Incident-linked notifications auto-resolve.</td></tr>
+  <tr><td>Channels</td><td>In-app inbox (always), Web Push (VAPID), email, optional self-hosted ntfy.</td></tr>
+</table>
+
+<h2 id="flows"><span class="n">8</span>Key runtime flows</h2>
+<p class="sub">Four of the twelve sequence diagrams. The full set is in <code>design/04-sequence-diagrams.md</code>.</p>
+<h3>8.1 Opening the main gate (dangerous command with step-up)</h3>
+<figure class="diagram"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant UI as Web UI
+    participant API as REST API
+    participant SEC as Security
+    participant CMD as Command Service
+    participant DM as Driver Manager
+    participant RD as Remootio Driver
+    participant R as Remootio device
+    participant BUS as Event Bus
+    participant WS as WebSocket
+
+    U-&gt;&gt;UI: tap &quot;Open gate&quot;
+    UI-&gt;&gt;API: POST /devices/{gate}/commands {gate.open}
+    API-&gt;&gt;SEC: authorize(user, gate, open)
+    SEC--&gt;&gt;API: allowed, requires step-up (policy: Gate.open)
+    API-&gt;&gt;CMD: submit → AWAITING_CONFIRMATION
+    API--&gt;&gt;UI: 202 {commandId, challenge: PIN|TOTP|passkey}
+    U-&gt;&gt;UI: enter PIN / passkey
+    UI-&gt;&gt;API: POST /commands/{id}/confirm {proof}
+    API-&gt;&gt;SEC: verify proof (rate-limited, 3 attempts)
+    SEC--&gt;&gt;CMD: confirmed
+    CMD-&gt;&gt;BUS: CommandStatusChanged(PENDING)
+    CMD-&gt;&gt;DM: dispatch(command)
+    DM-&gt;&gt;RD: execute(gate.open)
+    RD-&gt;&gt;R: ENCRYPTED {action: OPEN, actionId: n+1}
+    R--&gt;&gt;RD: ENCRYPTED ack (actionId)
+    RD--&gt;&gt;CMD: CommandAck(SENT)
+    CMD-&gt;&gt;BUS: CommandStatusChanged(SENT)
+    BUS-&gt;&gt;WS: → user queue
+    WS--&gt;&gt;UI: &quot;Opening…&quot; (optimistic: position = OPENING, quality ESTIMATED)
+    R--&gt;&gt;RD: event: LeftOpen / StateChange(OPEN) (sensor)
+    RD-&gt;&gt;BUS: StateChanged(gate.position = OPEN, GOOD)
+    BUS-&gt;&gt;CMD: matches expected state → CONFIRMED
+    BUS-&gt;&gt;WS: StateChanged + CommandStatusChanged(CONFIRMED)
+    WS--&gt;&gt;UI: &quot;Gate open ✓&quot; (all connected users see it)
+    Note over CMD: if no confirming state within 30 s → TIMEOUT,&lt;br/&gt;UI shows &quot;Command sent, state not confirmed&quot;
+</pre><figcaption>Figure 6: Open gate: PIN confirmation, encrypted local command, optimistic then confirmed state</figcaption></figure>
+<h3>8.2 Device event to notification (dehumidifier tank full)</h3>
+<figure class="diagram"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant P as ProBreeze (Tuya)
+    participant TD as Tuya Local Driver
+    participant BUS as Event Bus
+    participant SS as State Store
+    participant HS as History
+    participant HM as Health Monitor
+    participant NE as Notification Engine
+    participant DB as PostgreSQL
+    participant CH as Channels (Web Push / ntfy)
+    participant WS as WebSocket
+    actor U as User
+
+    P-&gt;&gt;TD: TCP push (encrypted DPS update)&lt;br/&gt;{dp 19: fault = &quot;FULL&quot;}
+    TD-&gt;&gt;TD: decrypt, map DP 19 → dehumidifier.tankFull = true
+    TD-&gt;&gt;BUS: StateChanged(tankFull=true)
+    TD-&gt;&gt;BUS: DeviceEventOccurred(TankFull, INFO)
+    par subscribers
+        BUS-&gt;&gt;SS: update current state
+        BUS-&gt;&gt;HS: append time-series
+        BUS-&gt;&gt;HM: rule &quot;tankFull&quot; → DEGRADED(&quot;Water tank full&quot;)
+        BUS-&gt;&gt;WS: push state to UI
+    end
+    HM-&gt;&gt;BUS: HealthChanged(ONLINE → DEGRADED)
+    BUS-&gt;&gt;NE: DeviceEventOccurred(TankFull)
+    NE-&gt;&gt;DB: find open notification dedupeKey = &quot;dehum-01:TankFull&quot;
+    alt none open
+        NE-&gt;&gt;DB: insert Notification (NEW)
+        NE-&gt;&gt;NE: routing rules (INFO → push, check quiet hours)
+        NE-&gt;&gt;CH: send &quot;💧 Kitchen dehumidifier: tank full&quot;
+        CH--&gt;&gt;U: phone push
+    else already open
+        NE-&gt;&gt;DB: occurrences++ (no new push)
+    end
+    NE-&gt;&gt;WS: NotificationRaised → badge + inbox
+    Note over P,NE: Tank emptied → tankFull=false → health ONLINE&lt;br/&gt;→ notification auto-RESOLVED
+</pre><figcaption>Figure 7: Push event → state, health, history, de-duplicated notification, live UI</figcaption></figure>
+<h3>8.3 Device goes offline and recovers</h3>
+<figure class="diagram"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant D as Driver
+    participant BUS as Event Bus
+    participant HM as Health Monitor
+    participant DB as PostgreSQL
+    participant NE as Notification Engine
+    participant WS as WebSocket
+    actor U as User
+
+    D-&gt;&gt;BUS: StateChanged (heartbeat, lastSeen=13:00)
+    HM-&gt;&gt;HM: watchdog tick every 15 s
+    Note over HM: expectedRefresh = 60 s, missedThreshold = 2
+    HM-&gt;&gt;HM: 13:02:00 now − lastSeen &gt; 120 s
+    HM-&gt;&gt;BUS: HealthChanged(ONLINE → OFFLINE, &quot;No data for 2 min&quot;)
+    HM-&gt;&gt;DB: open Incident(OFFLINE, 13:02)
+    BUS-&gt;&gt;WS: device card turns red, &quot;Offline · 0 min&quot;
+    BUS-&gt;&gt;NE: HealthChanged
+    NE-&gt;&gt;NE: grace period 5 min (per device setting)
+    alt still offline at 13:07
+        NE-&gt;&gt;DB: Notification(WARNING, dedupe &quot;dev:offline&quot;)
+        NE--&gt;&gt;U: push &quot;Dehumidifier offline since 13:02&quot;
+    else recovered within grace
+        NE-&gt;&gt;NE: suppress (flapping protection)
+    end
+    D-&gt;&gt;BUS: StateChanged (contact restored 13:20)
+    BUS-&gt;&gt;HM: lastSeen updated
+    HM-&gt;&gt;BUS: HealthChanged(OFFLINE → ONLINE)
+    HM-&gt;&gt;DB: resolve Incident (duration 18 min)
+    NE-&gt;&gt;DB: Notification → RESOLVED
+    NE--&gt;&gt;U: (optional) &quot;Dehumidifier back online after 18 min&quot;
+</pre><figcaption>Figure 8: Heartbeat watchdog → incident → grace period → notification → auto-resolve</figcaption></figure>
+<h3>8.4 Fire alarm (X-Sense)</h3>
+<figure class="diagram"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant SA as X-Sense smoke alarm
+    participant SB as X-Sense base station (SBS50)
+    participant MQ as Mosquitto (Home Hub)
+    participant MD as MQTT-Discovery Driver
+    participant XS as X-Sense Sidecar (cloud fallback)
+    participant XC as X-Sense cloud
+    participant BUS as Event Bus
+    participant NE as Notification Engine
+    actor U as All users
+
+    Note over SA,XC: Primary alarm path is independent of Home Hub:&lt;br/&gt;siren on the detectors + official X-Sense app push
+    Note over SB,MQ: one-time setup in X-Sense app → &quot;Connect to Home Assistant&quot;&lt;br/&gt;→ broker = Home Hub Mosquitto, user &quot;xsense-sbs50&quot;
+    SB-&gt;&gt;MQ: homeassistant/binary_sensor/…/config (discovery, retained)
+    MQ-&gt;&gt;MD: discovery → register SmokeAlarm + Battery devices
+    SA-&gt;&gt;SB: RF alarm
+    SB-&gt;&gt;MQ: state topic: smoke = ON
+    MQ-&gt;&gt;MD: message
+    MD-&gt;&gt;BUS: StateChanged(smoke=DETECTED) + DeviceEvent SmokeDetected (CRITICAL)
+    par cloud cross-check (redundant source)
+        XS-&gt;&gt;XC: poll every 60 s (or realtime push)
+        XC--&gt;&gt;XS: alarmStatus = 1
+        XS-&gt;&gt;BUS: (via MQTT bridge) SmokeDetected — deduped by NE
+    end
+    BUS-&gt;&gt;NE: SmokeDetected
+    NE-&gt;&gt;NE: CRITICAL → bypass quiet hours, all channels, all users
+    NE--&gt;&gt;U: push + ntfy (priority max) + email
+    Note over NE: Dashboard shows full-screen red banner&lt;br/&gt;until acknowledged by a user
+    loop every 15 min
+        XS-&gt;&gt;XC: liveness + battery + last self-test
+        XS-&gt;&gt;BUS: StateChanged(battery, lastTest) → Health Monitor
+    end
+</pre><figcaption>Figure 9: Local MQTT bridge with cloud cross-check and CRITICAL routing. The detectors stay primary.</figcaption></figure>
+
+<h2 id="deployment"><span class="n">9</span>Deployment &amp; security</h2>
+<p class="sub">One <code>docker compose up</code> on a home server. <code>hub-app</code> uses host networking so that multicast discovery (mDNS, SSDP, ONVIF, Tuya) works; databases and brokers bind to localhost only.</p>
+<figure class="diagram"><pre class="mermaid">
+flowchart TB
+    classDef c fill:#0969da,stroke:#033d8b,color:#fff
+    classDef s fill:#bf8700,stroke:#7d4e00,color:#fff
+    classDef n fill:#f6f8fa,stroke:#57606a,color:#24292f
+
+    subgraph HOSTNET[&quot;host network (LAN 192.168.1.0/24)&quot;]
+        CADDY[&quot;caddy :443&lt;br/&gt;TLS (local CA / DNS-01)&quot;]:::c
+        APP[&quot;hub-app :8080 (bound 127.0.0.1)&lt;br/&gt;mDNS · SSDP · ONVIF multicast · ARP&quot;]:::c
+        G2R[&quot;go2rtc :1984 (127.0.0.1)&lt;br/&gt;WebRTC :8555 tcp/udp&quot;]:::c
+        MQTTL[&quot;mosquitto :8883 TLS&lt;br/&gt;(for SBS50 &amp; LAN MQTT devices)&quot;]:::c
+    end
+
+    subgraph BACK[&quot;bridge network: hub-backend (internal)&quot;]
+        PG[(&quot;postgres-timescale :5432&quot;)]:::c
+        MQ[&quot;mosquitto :1883 (internal listener)&quot;]:::c
+        RR[&quot;sidecar-roborock&quot;]:::s
+        XS[&quot;sidecar-xsense&quot;]:::s
+        CUPS[&quot;cups (optional)&quot;]:::s
+    end
+
+    CADDY --&gt; APP &amp; G2R
+    APP --&gt; PG
+    APP --&gt; MQ
+    RR &amp; XS --&gt; MQ
+    MQTTL --- MQ
+</pre><figcaption>Figure 10: Docker topology</figcaption></figure>
+<table>
+  <tr><th style="width:28%">Threat</th><th>Mitigation</th></tr>
+  <tr><td>Internet access to the dashboard</td><td>No port forwarding; remote access via the VPN router only; Argon2id passwords + TOTP / passkeys</td></tr>
+  <tr><td>Stolen session or phone</td><td>Step-up PIN/passkey for opening the gate and other dangerous commands; session revocation; audit log</td></tr>
+  <tr><td>Database or backup leak</td><td>AES-256-GCM credential vault; master key kept outside the DB as a Docker secret; secrets are write-only through the API</td></tr>
+  <tr><td>Compromised sidecar or library</td><td>Non-root, read-only containers; per-sidecar MQTT user with topic ACLs</td></tr>
+  <tr><td>Cloud API lock-out</td><td>Central rate budgets with a reserve for user commands</td></tr>
+  <tr><td>False sense of fire safety</td><td>The hub is a secondary channel only, by design (ADR-007)</td></tr>
+</table>
+<p>Backups: a nightly <code>pg_dump</code> → restic (encrypted), config in Git, and the master key kept in a password manager. A restore drill is part of the v1.0 exit criteria.</p>
+
+<h2 id="roadmap"><span class="n">10</span>Roadmap: 20 phases</h2>
+<p class="sub">Each phase is small, testable and ends with a running system. Roughly 9–10 months part-time (S ≈ 1 week, M ≈ 2 weeks, L ≈ 3 weeks).</p>
+<figure class="diagram"><pre class="mermaid">
+flowchart TB
+    classDef d fill:#8250df,stroke:#512a97,color:#fff
+    classDef f fill:#0969da,stroke:#033d8b,color:#fff
+    classDef p fill:#2da44e,stroke:#116329,color:#fff
+    classDef i fill:#bf8700,stroke:#7d4e00,color:#fff
+
+    subgraph A[&quot;A · Design&quot;]
+        direction LR
+        P1[&quot;1 Design pack ✅&quot;]:::d
+    end
+    subgraph B[&quot;B · Foundation&quot;]
+        direction LR
+        P2[&quot;2 Repo &amp; build&quot;]:::f --&gt; P3[&quot;3 Domain core&quot;]:::f --&gt; P4[&quot;4 Persistence&quot;]:::f --&gt; P5[&quot;5 API + live&quot;]:::f --&gt; P6[&quot;6 Dockerise&quot;]:::f --&gt; P7[&quot;7 UI shell&quot;]:::f
+    end
+    subgraph C[&quot;C · Platform&quot;]
+        direction LR
+        P8[&quot;8 Driver SDK&quot;]:::p --&gt; P9[&quot;9 Security&quot;]:::p --&gt; P10[&quot;10 Health&quot;]:::p --&gt; P11[&quot;11 Notifications&quot;]:::p
+    end
+    subgraph D1[&quot;D · Integrations (local first)&quot;]
+        direction LR
+        P12[&quot;12 Remootio&quot;]:::i --&gt; P13[&quot;13 Printers&quot;]:::i --&gt; P14[&quot;14 Network&quot;]:::i --&gt; P15[&quot;15 MQTT + X-Sense&quot;]:::i
+    end
+    subgraph D2[&quot;D · Integrations (cloud / complex)&quot;]
+        direction LR
+        P16[&quot;16 ViCare&quot;]:::i --&gt; P17[&quot;17 Tuya / ProBreeze&quot;]:::i --&gt; P18[&quot;18 Roborock&quot;]:::i --&gt; P19[&quot;19 Cameras&quot;]:::i --&gt; P20[&quot;20 Appliances + v1.0&quot;]:::i
+    end
+    A --&gt; B --&gt; C --&gt; D1 --&gt; D2
+</pre><figcaption>Figure 11: Phase overview</figcaption></figure>
+<table>
+  <tr><th style="width:6%">#</th><th style="width:26%">Phase</th><th>Done when</th><th style="width:6%">Size</th></tr>
+  <tr><td class="phase-a">1</td><td>Design pack ✅</td><td>Pack reviewed; open questions answered or defaults accepted</td><td>S</td></tr>
+  <tr><td class="phase-b">2</td><td>Repository &amp; build</td><td>Multi-module Maven, CI green, empty app healthy</td><td>S</td></tr>
+  <tr><td class="phase-b">3</td><td>Domain core &amp; event bus</td><td>Capabilities, command lifecycle, ordered bus; simulated devices running</td><td>M</td></tr>
+  <tr><td class="phase-b">4</td><td>Persistence</td><td>Postgres/TimescaleDB schema; state survives restarts; history downsampled</td><td>S</td></tr>
+  <tr><td class="phase-b">5</td><td>REST + WebSocket API</td><td>Commands observable live over WebSocket; contract tests pass</td><td>M</td></tr>
+  <tr><td class="phase-b">6</td><td>Dockerise</td><td><code>docker compose up</code> → working HTTPS hub; backup/restore tested</td><td>S</td></tr>
+  <tr><td class="phase-b">7</td><td>UI shell &amp; design system</td><td>Live dashboard on desktop and mobile; PWA and accessibility scores ≥ 90</td><td>M</td></tr>
+  <tr><td class="phase-c">8</td><td>Driver SDK &amp; manager</td><td>Integrations added from the UI with no UI code; crash isolation works</td><td>M</td></tr>
+  <tr><td class="phase-c">9</td><td>Security</td><td>2FA, step-up, vault, audit; ZAP baseline scan clean</td><td>M</td></tr>
+  <tr><td class="phase-c">10</td><td>Health monitor</td><td>OFFLINE detected within 2× refresh; incidents and timeline shown</td><td>M</td></tr>
+  <tr><td class="phase-c">11</td><td>Notifications</td><td>One push per issue, de-duplicated, auto-resolved</td><td>M</td></tr>
+  <tr><td class="phase-d">12</td><td>Remootio gate</td><td>Gate opens with a PIN in under 1 s; live state</td><td>S</td></tr>
+  <tr><td class="phase-d">13</td><td>Printers (IPP)</td><td>Drag-and-drop PDF prints duplex; paper-out alert</td><td>M</td></tr>
+  <tr><td class="phase-d">14</td><td>Network &amp; routers</td><td>All clients listed; unknown-device alert; "not on Wi-Fi" diagnosis</td><td>L</td></tr>
+  <tr><td class="phase-d">15</td><td>MQTT, sidecars &amp; X-Sense</td><td>Detector test button → CRITICAL push on all phones</td><td>M</td></tr>
+  <tr><td class="phase-d">16</td><td>ViCare heating</td><td>Target set from the dashboard; no rate-limit bans in a 7-day soak</td><td>M</td></tr>
+  <tr><td class="phase-d">17</td><td>Tuya / ProBreeze</td><td>Works with the internet unplugged; tank-full alert</td><td>M</td></tr>
+  <tr><td class="phase-d">18</td><td>Roborock (sidecar)</td><td>Room cleaning from the dashboard; error alert within 1 min</td><td>M</td></tr>
+  <tr><td class="phase-d">19</td><td>Cameras</td><td>Live view in under 2 s on the LAN and over VPN; motion thumbnails</td><td>M</td></tr>
+  <tr><td class="phase-d">20</td><td>Appliances, hardening, v1.0</td><td>Fridge and coffee machine added; 14-day soak and chaos tests pass; v1.0 released</td><td>L</td></tr>
+</table>
+<p><b>After v1.0:</b> Zigbee lights and sensors (via Zigbee2MQTT), Matter, a visual automation builder and scenes, presence, an energy dashboard, Frigate camera recording, local voice, and an optional Home Assistant bridge for long-tail devices.</p>
+
+<h2 id="decisions"><span class="n">11</span>Decisions &amp; open questions</h2>
+<table>
+  <tr><th style="width:12%">ADR</th><th>Decision</th><th style="width:14%">Status</th></tr>
+  <tr><td>001</td><td>Java 25 + Spring Boot 4 modular monolith</td><td><span class="pill g">Accepted</span></td></tr>
+  <tr><td>002</td><td>Capability-based device model as the single internal language</td><td><span class="pill g">Accepted</span></td></tr>
+  <tr><td>003</td><td>In-process event bus; MQTT only at the edge</td><td><span class="pill g">Accepted</span></td></tr>
+  <tr><td>004</td><td>Polyglot drivers: Java SPI and MQTT sidecars</td><td><span class="pill g">Accepted</span></td></tr>
+  <tr><td>005</td><td>Docker Compose with host networking for discovery</td><td><span class="pill y">Proposed</span></td></tr>
+  <tr><td>006</td><td>Remote access only through VPN</td><td><span class="pill y">Proposed</span></td></tr>
+  <tr><td>007</td><td>The hub is never the primary life-safety alarm</td><td><span class="pill g">Accepted</span></td></tr>
+  <tr><td>008</td><td>PostgreSQL + TimescaleDB only (no Redis, no separate TSDB)</td><td><span class="pill g">Accepted</span></td></tr>
+  <tr><td>009</td><td>React + TypeScript PWA</td><td><span class="pill y">Proposed</span></td></tr>
+  <tr><td>010</td><td>Generic MQTT-Discovery driver (Home Assistant convention)</td><td><span class="pill g">Accepted</span></td></tr>
+  <tr><td>011</td><td>Scope: own devices first, open standards second, no HA parity</td><td><span class="pill g">Accepted</span></td></tr>
+</table>
+<div class="callout"><b>Needs your input before the related phase:</b> main router and VPN router models (Q1–Q2) · camera brands (Q3) · fridge and coffee machine brands (Q4–Q5) · Roborock model (Q6) · ProBreeze model and its app (Q7) · Remootio version and gate sensor (Q8) · boiler model and API tier (Q9) · X-Sense detector models (Q10) · printer models (Q11) · Docker host hardware (Q12) · household users (Q13) · own domain for TLS (Q14). Each question has a safe default, listed in <code>design/08-decisions-and-open-questions.md</code>.</div>
+
+<h2 id="docs"><span class="n">12</span>Detailed design documents</h2>
+<p class="sub">This document is the summary. Full detail lives in the <code>design/</code> folder:</p>
+<table>
+  <tr><th style="width:42%">Document</th><th>Contents</th></tr>
+  <tr><td><code>design/00-README.md</code></td><td>Index and reading guide</td></tr>
+  <tr><td><code>design/01-architecture-overview.md</code></td><td>Goals, principles, stack, context, component, module and deployment views, quality targets</td></tr>
+  <tr><td><code>design/02-domain-model.md</code></td><td>Class diagram, capability catalogue, health and command state machines, notification model, ER schema</td></tr>
+  <tr><td><code>design/03-driver-sdk-and-messaging.md</code></td><td>Java SPI, MQTT Driver Protocol, event bus guarantees, rate-budget manager</td></tr>
+  <tr><td><code>design/04-sequence-diagrams.md</code></td><td>12 sequence diagrams covering every major flow</td></tr>
+  <tr><td><code>design/05-integration-specs.md</code></td><td>Per-device specs: transport, auth, capabilities, health signals, risks</td></tr>
+  <tr><td><code>design/06-security-and-deployment.md</code></td><td>Threat model, auth, vault, Docker topology and Compose file, TLS, backups, operations</td></tr>
+  <tr><td><code>design/07-ui-ux-design.md</code></td><td>Information architecture, dashboard wireframe, device card states, design system</td></tr>
+  <tr><td><code>design/08-decisions-and-open-questions.md</code></td><td>Full ADRs and the open-question list with defaults</td></tr>
+  <tr><td><code>design/09-roadmap.md</code></td><td>Full 20-phase plan with scope, exit criteria and timeline</td></tr>
+</table>
+
+<footer>Home Hub · Main Design Document · Draft v0.1 · 8 November 2026 · Serkan Yucel</footer>
+</main>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose", sequence: { useMaxWidth: true }, flowchart: { useMaxWidth: true } });
+</script>
+</body>
+</html>
