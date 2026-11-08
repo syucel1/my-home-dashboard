@@ -91,6 +91,7 @@
     <li><a href="#integration">Integrating proprietary devices</a></li>
     <li><a href="#devices">Device integration summary</a></li>
     <li><a href="#health">Health &amp; notifications</a></li>
+    <li><a href="#ui">User interface: Night Console</a></li>
     <li><a href="#flows">Key runtime flows</a></li>
     <li><a href="#deployment">Deployment &amp; security</a></li>
     <li><a href="#roadmap">Roadmap: 20 phases</a></li>
@@ -369,9 +370,30 @@ stateDiagram-v2
   <tr><td>Channels</td><td>In-app inbox (always), Web Push (VAPID), email, optional self-hosted ntfy.</td></tr>
 </table>
 
-<h2 id="flows"><span class="n">8</span>Key runtime flows</h2>
+<h2 id="ui"><span class="n">8</span>User interface: Night Console</h2>
+<p class="sub">Three directions were mocked up (<code>design/mockups/</code>). <b>B · Night Console</b> was chosen (ADR-012): a dark, glanceable tile grid that works on a laptop, on a phone and as a wall-tablet kiosk.</p>
+<figure class="diagram"><img src="design/mockups/mockup-b-night-console.png" alt="Figure 6a: Chosen dashboard design: Night Console (1440 px)"><figcaption>Figure 6a: Chosen dashboard design: Night Console (1440 px)</figcaption></figure>
+<table>
+  <tr><th style="width:18%">Row</th><th>Tiles (12-column grid)</th></tr>
+  <tr><td>Header</td><td>Brand · large clock, date and weather · status pills (attention count, devices OK, internet/VPN) · inbox</td></tr>
+  <tr><td>1</td><td><b>Heating</b> dial with current/target and mode · <b>Main gate</b> with a large <i>Hold to open</i> (PIN/passkey) · <b>Needs attention</b> list coloured by severity</td></tr>
+  <tr><td>2</td><td><b>Cameras</b>: three live WebRTC tiles with motion labels · <b>Roborock</b> with room chips and <i>Clean selected rooms</i></td></tr>
+  <tr><td>3</td><td>Compact status tiles: <b>Dehumidifier</b> · <b>Fire alarms</b> · <b>Kitchen</b> (fridge, coffee) · <b>Network</b></td></tr>
+  <tr><td>4</td><td><b>Recent activity</b> feed · <b>Print</b> drop zone</td></tr>
+</table>
+<table>
+  <tr><th style="width:28%">Design token</th><th>Value</th></tr>
+  <tr><td>Fonts</td><td>Space Grotesk (headings, numbers, clock) · Inter (UI text)</td></tr>
+  <tr><td>Surfaces</td><td>Background <code>#0b0f14</code> · tile <code>#141a21</code> · raised <code>#1b232c</code> · border <code>#26303b</code></td></tr>
+  <tr><td>Text</td><td><code>#e8edf2</code> · muted <code>#9aa6b2</code> (≥ 7:1 contrast on tiles)</td></tr>
+  <tr><td>Accent &amp; status</td><td>Accent <code>#5cc8ff</code> · OK <code>#3fb950</code> · Warning <code>#e3b341</code> · Critical <code>#ff7b72</code> · Heating <code>#ff9b5c</code></td></tr>
+  <tr><td>Shape &amp; layout</td><td>18 px tile radius, 12 px controls · 12 columns, 16 px gap, max width 1440 px · touch targets ≥ 48 px</td></tr>
+</table>
+<p>Below 1100 px, tiles halve; below 700 px, every tile is full-width in the same order. Kiosk mode enlarges the clock, dims after inactivity, and wakes with a red full-width banner on smoke/CO. A light theme is offered as a setting.</p>
+
+<h2 id="flows"><span class="n">9</span>Key runtime flows</h2>
 <p class="sub">Four of the twelve sequence diagrams. The full set is in <code>design/04-sequence-diagrams.md</code>.</p>
-<h3>8.1 Opening the main gate (dangerous command with step-up)</h3>
+<h3>9.1 Opening the main gate (dangerous command with step-up)</h3>
 <figure class="diagram"><pre class="mermaid">
 sequenceDiagram
     autonumber
@@ -412,7 +434,7 @@ sequenceDiagram
     WS--&gt;&gt;UI: &quot;Gate open ✓&quot; (all connected users see it)
     Note over CMD: if no confirming state within 30 s → TIMEOUT,&lt;br/&gt;UI shows &quot;Command sent, state not confirmed&quot;
 </pre><figcaption>Figure 6: Open gate: PIN confirmation, encrypted local command, optimistic then confirmed state</figcaption></figure>
-<h3>8.2 Device event to notification (dehumidifier tank full)</h3>
+<h3>9.2 Device event to notification (dehumidifier tank full)</h3>
 <figure class="diagram"><pre class="mermaid">
 sequenceDiagram
     autonumber
@@ -452,7 +474,7 @@ sequenceDiagram
     NE-&gt;&gt;WS: NotificationRaised → badge + inbox
     Note over P,NE: Tank emptied → tankFull=false → health ONLINE&lt;br/&gt;→ notification auto-RESOLVED
 </pre><figcaption>Figure 7: Push event → state, health, history, de-duplicated notification, live UI</figcaption></figure>
-<h3>8.3 Device goes offline and recovers</h3>
+<h3>9.3 Device goes offline and recovers</h3>
 <figure class="diagram"><pre class="mermaid">
 sequenceDiagram
     autonumber
@@ -486,7 +508,7 @@ sequenceDiagram
     NE-&gt;&gt;DB: Notification → RESOLVED
     NE--&gt;&gt;U: (optional) &quot;Dehumidifier back online after 18 min&quot;
 </pre><figcaption>Figure 8: Heartbeat watchdog → incident → grace period → notification → auto-resolve</figcaption></figure>
-<h3>8.4 Fire alarm (X-Sense)</h3>
+<h3>9.4 Fire alarm (X-Sense)</h3>
 <figure class="diagram"><pre class="mermaid">
 sequenceDiagram
     autonumber
@@ -523,7 +545,7 @@ sequenceDiagram
     end
 </pre><figcaption>Figure 9: Local MQTT bridge with cloud cross-check and CRITICAL routing. The detectors stay primary.</figcaption></figure>
 
-<h2 id="deployment"><span class="n">9</span>Deployment &amp; security</h2>
+<h2 id="deployment"><span class="n">10</span>Deployment &amp; security</h2>
 <p class="sub">One <code>docker compose up</code> on a home server. <code>hub-app</code> uses host networking so that multicast discovery (mDNS, SSDP, ONVIF, Tuya) works; databases and brokers bind to localhost only.</p>
 <figure class="diagram"><pre class="mermaid">
 flowchart TB
@@ -563,7 +585,7 @@ flowchart TB
 </table>
 <p>Backups: a nightly <code>pg_dump</code> → restic (encrypted), config in Git, and the master key kept in a password manager. A restore drill is part of the v1.0 exit criteria.</p>
 
-<h2 id="roadmap"><span class="n">10</span>Roadmap: 20 phases</h2>
+<h2 id="roadmap"><span class="n">11</span>Roadmap: 20 phases</h2>
 <p class="sub">Each phase is small, testable and ends with a running system. Roughly 9–10 months part-time (S ≈ 1 week, M ≈ 2 weeks, L ≈ 3 weeks).</p>
 <figure class="diagram"><pre class="mermaid">
 flowchart TB
@@ -619,7 +641,7 @@ flowchart TB
 </table>
 <p><b>After v1.0:</b> Zigbee lights and sensors (via Zigbee2MQTT), Matter, a visual automation builder and scenes, presence, an energy dashboard, Frigate camera recording, local voice, and an optional Home Assistant bridge for long-tail devices.</p>
 
-<h2 id="decisions"><span class="n">11</span>Decisions &amp; open questions</h2>
+<h2 id="decisions"><span class="n">12</span>Decisions &amp; open questions</h2>
 <table>
   <tr><th style="width:12%">ADR</th><th>Decision</th><th style="width:14%">Status</th></tr>
   <tr><td>001</td><td>Java 25 + Spring Boot 4 modular monolith</td><td><span class="pill g">Accepted</span></td></tr>
@@ -633,10 +655,11 @@ flowchart TB
   <tr><td>009</td><td>React + TypeScript PWA</td><td><span class="pill y">Proposed</span></td></tr>
   <tr><td>010</td><td>Generic MQTT-Discovery driver (Home Assistant convention)</td><td><span class="pill g">Accepted</span></td></tr>
   <tr><td>011</td><td>Scope: own devices first, open standards second, no HA parity</td><td><span class="pill g">Accepted</span></td></tr>
+  <tr><td>012</td><td>Night Console (dark tile grid) as the primary UI direction</td><td><span class="pill g">Accepted</span></td></tr>
 </table>
 <div class="callout"><b>Needs your input before the related phase:</b> main router and VPN router models (Q1–Q2) · camera brands (Q3) · fridge and coffee machine brands (Q4–Q5) · Roborock model (Q6) · ProBreeze model and its app (Q7) · Remootio version and gate sensor (Q8) · boiler model and API tier (Q9) · X-Sense detector models (Q10) · printer models (Q11) · Docker host hardware (Q12) · household users (Q13) · own domain for TLS (Q14). Each question has a safe default, listed in <code>design/08-decisions-and-open-questions.md</code>.</div>
 
-<h2 id="docs"><span class="n">12</span>Detailed design documents</h2>
+<h2 id="docs"><span class="n">13</span>Detailed design documents</h2>
 <p class="sub">This document is the summary. Full detail lives in the <code>design/</code> folder:</p>
 <table>
   <tr><th style="width:42%">Document</th><th>Contents</th></tr>
@@ -647,12 +670,13 @@ flowchart TB
   <tr><td><code>design/04-sequence-diagrams.md</code></td><td>12 sequence diagrams covering every major flow</td></tr>
   <tr><td><code>design/05-integration-specs.md</code></td><td>Per-device specs: transport, auth, capabilities, health signals, risks</td></tr>
   <tr><td><code>design/06-security-and-deployment.md</code></td><td>Threat model, auth, vault, Docker topology and Compose file, TLS, backups, operations</td></tr>
-  <tr><td><code>design/07-ui-ux-design.md</code></td><td>Information architecture, dashboard wireframe, device card states, design system</td></tr>
+  <tr><td><code>design/07-ui-ux-design.md</code></td><td>Chosen Night Console layout, information architecture, device card states, design tokens</td></tr>
+  <tr><td><code>design/mockups/</code></td><td>The three dashboard mockups (HTML + screenshots); B · Night Console chosen</td></tr>
   <tr><td><code>design/08-decisions-and-open-questions.md</code></td><td>Full ADRs and the open-question list with defaults</td></tr>
   <tr><td><code>design/09-roadmap.md</code></td><td>Full 20-phase plan with scope, exit criteria and timeline</td></tr>
 </table>
 
-<footer>Home Hub · Main Design Document · Draft v0.1 · 8 November 2026 · Serkan Yucel</footer>
+<footer>Home Hub · Main Design Document · Draft v0.2 · 8 November 2026 · Serkan Yucel</footer>
 </main>
 <script type="module">
 import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";

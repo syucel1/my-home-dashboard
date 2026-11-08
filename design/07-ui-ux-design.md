@@ -34,7 +34,31 @@ flowchart LR
     SET --> S1["Integrations · Users & roles ·<br/>Notification rules & channels ·<br/>Rooms · Backups · System health"]:::s
 ```
 
-## 3. Home dashboard wireframe
+## 3. Chosen direction: Night Console (Mockup B)
+
+> **Decision (8 Nov 2026):** Of the three mockups in [`mockups/`](mockups/README.md), **B · Night Console** was chosen as the primary UI direction. See [ADR-012](08-decisions-and-open-questions.md#adr-012-night-console-as-the-primary-ui-direction).
+
+![Night Console dashboard](mockups/mockup-b-night-console.png)
+
+**Why it was chosen:** it reads well from across a room (a wall tablet or kitchen display), the dark theme suits always-on screens and evening use, and the tile grid gives every device family a consistent, scannable home.
+
+**Layout (desktop, 1440 px):**
+
+| Row | Tiles (12-column grid) |
+|-----|------------------------|
+| Header | Brand · large clock and date/weather · status pills (attention count, devices OK, internet/VPN) · inbox button |
+| 1 | **Heating** (4 cols: dial with current/target, mode, ±) · **Main gate** (4: state, last actor, large *Hold to open* with PIN/passkey) · **Needs attention** (4: up to 3 incidents, coloured by severity) |
+| 2 | **Cameras** (8: 3 live WebRTC tiles with motion labels) · **Roborock** (4: state, battery, room chips, *Clean selected rooms*) |
+| 3 | Four compact status tiles (3 cols each): **Dehumidifier** · **Fire alarms** · **Kitchen** (fridge + coffee) · **Network** |
+| 4 | **Recent activity** feed (6) · **Print** drop zone (6) |
+
+**Responsive behaviour:** below 1100 px, 3- and 4-column tiles become half-width and wide tiles become full-width. Below 700 px, every tile is full-width in the same order, so attention, gate and heating stay at the top on a phone.
+
+**Kiosk mode** (`/kiosk`): the same layout with a larger clock, the inbox button hidden, and the screen dimming after inactivity. A CRITICAL event (smoke/CO) wakes the screen and shows a full-width red banner over the grid.
+
+**Light theme:** the same grid with light tokens, offered as a user setting. Mockups A and C remain as references for a future light/"status board" view.
+
+## 3a. Original wireframe (for reference)
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
@@ -87,13 +111,21 @@ flowchart LR
 
 ## 6. Design system
 
+Tokens follow the chosen **Night Console** direction (dark is the default theme):
+
 | Token | Value |
 |-------|-------|
-| Font | Inter (UI), JetBrains Mono (diagnostics) |
-| Radius | 12 px cards, 8 px controls |
+| Fonts | **Space Grotesk** (headings, big numbers, clock), **Inter** (UI text), JetBrains Mono (diagnostics) |
+| Background / tile / raised | `#0b0f14` / `#141a21` / `#1b232c` |
+| Border | `#26303b` |
+| Text / muted text | `#e8edf2` / `#9aa6b2` (≥ 7:1 on tiles) |
+| Accent (primary actions) | `#5cc8ff`, with dark text `#04121c` on it |
+| Status colours | OK `#3fb950`, Warning `#e3b341`, Critical `#ff7b72`, Heating `#ff9b5c` |
+| Radius | 18 px tiles, 12 px controls and inner cards |
+| Grid | 12 columns, 16 px gap, max width 1440 px, 32 px page padding |
 | Spacing | 4 px base scale |
-| Status colours | OK `#2da44e`, Warning `#bf8700`, Critical `#cf222e`, Active `#0969da`, Neutral `#6e7781` |
-| Themes | Light, dark, auto (OS); high-contrast for wall tablets |
+| Touch targets | ≥ 48 px (64 px for the gate button) |
+| Themes | Dark (default), light, auto (OS); high-contrast for wall tablets |
 | Components | shadcn/ui (Radix) primitives: Card, Dialog, Sheet, Tabs, Slider, Toast, Command palette (⌘K "open gate", "clean kitchen") |
 | Icons | Lucide |
 | Motion | 150–200 ms ease-out; respects `prefers-reduced-motion` |

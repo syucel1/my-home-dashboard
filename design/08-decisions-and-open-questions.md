@@ -15,6 +15,7 @@
 | ADR-009 | React + TypeScript SPA delivered as a PWA | Proposed |
 | ADR-010 | Generic MQTT-Discovery driver compatible with the HA convention | Accepted |
 | ADR-011 | Scope: own devices first, open standards second, no HA parity | Accepted |
+| ADR-012 | Night Console (dark tile grid) as the primary UI direction | Accepted |
 
 ### ADR-001: Java 25 + Spring Boot 4 modular monolith
 **Context.** A single home server, one main developer, and a need for reliability and good tooling.
@@ -63,6 +64,11 @@
 
 ### ADR-011: Scope discipline
 **Decision.** v1.0 covers the devices on Serkan's list plus generic MQTT/Tuya. Lights and Zigbee/Matter come post-v1, and only through existing open bridges.
+
+### ADR-012: Night Console as the primary UI direction
+**Context.** Three dashboard mockups were produced (`design/mockups/`): A · Calm Control (light, sidebar), B · Night Console (dark tile grid), C · Status Board (health table).
+**Decision.** **B · Night Console** is the primary direction: a dark theme by default, a 12-column tile grid, a large clock, a heating dial, a prominent gate control, live camera tiles and an activity feed. It also serves as the kiosk / wall-tablet layout.
+**Consequences.** The design tokens in [07 §6](07-ui-ux-design.md#6-design-system) follow the dark palette, and phase 7 (UI shell) builds this layout first. A light theme comes as a setting. C's health table can come back later as a "Status" view in the Devices section.
 
 ## Open questions
 
