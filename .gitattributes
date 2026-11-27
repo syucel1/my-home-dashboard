@@ -1,0 +1,14 @@
+# Normalise line endings in the repo; check out with the platform default.
+* text=auto
+
+# Scripts keep the line endings their shells need
+*.sh   text eol=lf
+mvnw   text eol=lf
+*.cmd  text eol=crlf
+*.bat  text eol=crlf
+
+# Binary files
+*.png  binary
+*.jpg  binary
+*.pdf  binary
+*.jar  binary

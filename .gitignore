@@ -1,0 +1,35 @@
+# Build output
+target/
+out/
+build/
+*.class
+*.log
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Frontend (from phase 7)
+node_modules/
+ui/dist/
+
+# Python sidecars (from phase 15)
+__pycache__/
+.venv/
+
+# Secrets and local config: never commit
+.env
+.env.*
+!.env.example
+deploy/secrets/
+*.pem
+*.key

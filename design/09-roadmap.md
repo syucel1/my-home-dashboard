@@ -78,9 +78,10 @@ gantt
 
 ## B · Foundation
 
-### Phase 2: Repository & build skeleton · S
-- **Scope:** Git repo (mono-repo: `backend/`, `ui/`, `sidecars/`, `deploy/`, `docs/`). Maven multi-module (`hub-domain`, `hub-driver-sdk`, `hub-core`, `hub-persistence`, `hub-web`, `hub-app`, `drivers/`). Java 25 toolchain, Spotless formatting, Error Prone, ArchUnit module rules, JUnit 5 + AssertJ + Testcontainers. GitHub Actions CI (build, test, Trivy scan). This design pack is moved into `docs/`.
+### Phase 2: Repository & build skeleton · S · delivered, awaiting first green `mvn verify` / CI run
+- **Scope:** Git repo (mono-repo: `backend/`, `ui/`, `sidecars/`, `deploy/`). Maven multi-module (`hub-domain`, `hub-driver-sdk`, `hub-core`, `hub-persistence`, `hub-web`, `hub-app`, `drivers/`). Java 25 toolchain, Spotless formatting, Error Prone, ArchUnit module rules, JUnit + AssertJ (Testcontainers is managed by the Spring Boot BOM and is first used in phase 4). GitHub Actions CI (build, test, Trivy scan) and Dependabot. The design pack stays in `design/`.
 - **Done when:** `mvn verify` is green in CI; an empty Spring Boot app starts and `/actuator/health` = UP.
+- **Delivered:** Spring Boot 4.1 app with `/actuator/health` and a first endpoint, `/api/v1/system/info`; 5 ArchUnit rules enforcing the module boundaries; an Error Prone and Spotless (palantir-java-format) build; `.gitignore`, `.gitattributes`, `.editorconfig`; placeholder `ui/`, `sidecars/` and `deploy/` folders.
 
 ### Phase 3: Domain core & event bus · M
 - **Scope:** `Device`, `Capability` (sealed types) and the v1 capability catalogue as records; `AttributeValue` with `Quality`; `Command` lifecycle state machine; `HubEvent` hierarchy. In-process **EventBus** (per-device ordering, virtual-thread subscribers, bounded queues). In-memory Device Registry and State Store. A **simulated driver** (fake thermostat, fake gate) that generates realistic data.
