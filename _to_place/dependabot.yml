@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: /backend
+    schedule:
+      interval: weekly
+    groups:
+      spring-boot:
+        patterns: ["org.springframework.boot*"]
+      build-tooling:
+        patterns: ["com.google.errorprone*", "com.diffplug.spotless*", "com.tngtech.archunit*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

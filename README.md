@@ -2,7 +2,7 @@
 
 A self-hosted home platform with a **Java backend** and a **modern browser UI**. It brings every device in the house onto one clean dashboard: gate, heating, fire alarms, dehumidifier, robot vacuum, printers, cameras, network, fridge and coffee machine. **Device health** and a **unified notification inbox** are first-class features.
 
-> **Status:** Phase 1 of 20 (Design) is complete and the UI direction is chosen. Implementation starts in Phase 2.
+> **Status:** Phase 2 of 20 (Repository & build skeleton) is delivered: Maven multi-module backend, a Spring Boot app with a health endpoint, quality checks and CI. It is waiting for its first green build. Next up is Phase 3 (domain core & event bus).
 
 ![Home Hub dashboard: Night Console design](design/mockups/mockup-b-night-console.png)
 
@@ -98,7 +98,21 @@ After v1.0, lights and sensors come through Zigbee2MQTT and Matter, reusing the 
 
 ## Getting started
 
-Not runnable yet. From Phase 6 the whole stack will start with:
+### Build and run the backend (available now)
+
+You need **JDK 25** (e.g. Eclipse Temurin 25) and **Maven 3.9+**.
+
+```bash
+cd backend
+mvn spotless:apply verify      # format, compile (Error Prone), unit + architecture tests
+java -jar hub-app/target/hub-app.jar
+```
+
+Then open <http://localhost:8080/actuator/health>, which should report `{"status":"UP"}`, and <http://localhost:8080/api/v1/system/info>. See [backend/README.md](backend/README.md) for the modules and build options.
+
+### Full stack (from Phase 6)
+
+From Phase 6 the whole stack will start with:
 
 ```bash
 git clone https://github.com/syucel1/my-home-dashboard.git
@@ -127,10 +141,20 @@ my-home-dashboard/
 │   ├── 09-roadmap.md
 │   ├── diagrams/                 rendered PNGs of every Mermaid diagram
 │   └── mockups/                  dashboard mockups (A, B ✔, C)
+├── backend/                      Java 25 / Spring Boot 4 modular monolith (Maven)
+│   ├── hub-domain/               device/capability model (plain Java)
+│   ├── hub-driver-sdk/           driver SPI, the only API drivers may use
+│   ├── hub-core/                 registry, commands, event bus, health, notifications
+│   ├── hub-persistence/          PostgreSQL + TimescaleDB (phase 4)
+│   ├── hub-web/                  REST + WebSocket API
+│   ├── drivers/                  in-process device drivers (phase 8+)
+│   └── hub-app/                  Spring Boot app, runnable jar, architecture tests
+├── ui/                           React PWA (phase 7)
+├── sidecars/                     Python drivers over MQTT (phase 15+)
+├── deploy/                       Docker Compose (phase 6)
+├── .github/                      CI (build, tests, vulnerability scan) and Dependabot
 └── LICENSE
 ```
-
-From Phase 2, source code will be added under `backend/`, `ui/`, `sidecars/` and `deploy/`.
 
 ## Roadmap
 
@@ -139,7 +163,7 @@ There are 20 small phases, each ending with a running system (roughly 9–10 mon
 | Stage | Phases |
 |-------|--------|
 | A · Design | 1 Design ✅ (incl. UI direction) |
-| B · Foundation | 2 Repository & build · 3 Domain core & event bus · 4 Persistence · 5 REST + WebSocket API · 6 Dockerise · 7 UI shell (Night Console) |
+| B · Foundation | 2 Repository & build (delivered, first build pending) · 3 Domain core & event bus · 4 Persistence · 5 REST + WebSocket API · 6 Dockerise · 7 UI shell (Night Console) |
 | C · Platform | 8 Driver SDK · 9 Security · 10 Health monitor · 11 Notifications |
 | D · Integrations | 12 Remootio · 13 Printers · 14 Network · 15 MQTT + X-Sense · 16 ViCare · 17 Tuya / ProBreeze · 18 Roborock · 19 Cameras · 20 Appliances, hardening, v1.0 |
 
